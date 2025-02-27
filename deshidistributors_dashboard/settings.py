@@ -46,7 +46,7 @@ REST_FRAMEWORK = {
         # 'product.authentication.CustomJWTAuthentication',
     ),
     
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 5,
     
     'DEFAULT_FILTER_BACKENDS': (
@@ -146,10 +146,12 @@ STATICFILES_DIRS = [BASE_DIR / 'static', ]
 # STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static'),]
 # STATIC_ROOT = BASE_DIR / 'collectstatic'
 
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 # MEDIA_ROOT = BASE_DIR / 'media'
 # MEDIA_ROOT = [os.path.join(BASE_DIR, 'media'),]
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from product.models import Category
+from django.core.files.storage import default_storage
 
 class CustomUser(AbstractUser):
     USER_TYPE = (
@@ -37,10 +38,24 @@ class CustomUser(AbstractUser):
 class Slider(models.Model):
     image = models.ImageField(upload_to='image/slider/', blank=True, null=True)
     category = models.ForeignKey(Category, on_delete=models.DO_NOTHING, related_name='slider')
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
     
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
+    
+    def save(self, *args, **kwargs):
+        if self.pk:
+            old_instance = Slider.objects.get(pk=self.pk)
+            if old_instance and old_instance.image and old_instance.image != self.image:
+                if default_storage.exists(old_instance.image.name):
+                    default_storage.delete(old_instance.image.name)
+        
+        super().save(*args, **kwargs)
+    
+    def delete(self, *args, **kwargs):
+        if self.image and default_storage.exists(self.image.name):
+            default_storage.delete(self.image.name)
+        return super().delete( *args, **kwargs)
     
     def __str__(self):
         return self.category.title
