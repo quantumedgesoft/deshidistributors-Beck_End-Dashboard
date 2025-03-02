@@ -94,3 +94,4 @@ class ProductViewSet(viewsets.ModelViewSet):
                 'message': 'Product Successfully Deleted!',
             }, status=status.HTTP_204_NO_CONTENT
         )
+
