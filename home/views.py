@@ -70,16 +70,61 @@ class SliderViewSet(viewsets.ModelViewSet):
     serializer_class = SliderSerializer
     permission_classes = [AdminCreationPermission]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['is_active']
-    search_fields = ['image', 'category__title']
+    filterset_fields = ['is_active', 'category']
+    search_fields = ['name', 'image', 'category__title']
     parser_classes = [MultiPartParser]
+    
+    def update(self, request, *args, **kwargs):
+        try:
+            response = super().update(request, *args, **kwargs)
+            return Response(
+                {
+                    'status': True,
+                    'message': 'Slider Successfully Updated!',
+                    'slider': response.data
+                }, status=status.HTTP_200_OK
+            )
+        except:
+            return Response(
+                    {
+                        'status': False,
+                        'message': 'Slider not found!'
+                    }, status=status.HTTP_204_NO_CONTENT
+                )
+    
+    def destroy(self, request, *args, **kwargs):
+        slider_pk = kwargs.get('pk')
+        try:
+            if Slider.objects.filter(pk=slider_pk).exists():
+                slider = Slider.objects.get(id=slider_pk)
+                slider.delete()
+                return Response(
+                    {
+                        'status': True,
+                        'message': 'Slider Successfully Deleted!'
+                    }, status=status.HTTP_200_OK
+                )
+            else:
+                return Response(
+                    {
+                        'status': False,
+                        'message': 'Slider not found!'
+                    }, status=status.HTTP_204_NO_CONTENT
+                )
+        except Exception as e:
+            return Response(
+                {
+                    'status': False,
+                    'message': 'Somethings wrong!',
+                    'error': str(e)
+                }, status=status.HTTP_204_NO_CONTENT
+            )        
     
     def create(self, request, *args, **kwargs):
         category_id = request.data.get('category')
         if category_id:
             try:
                 category = Category.objects.get(id=category_id)
-                request.data['category'] = category.id
                 serializer = self.get_serializer(data=request.data)
                 serializer.is_valid(raise_exception=True)
                 serializer.save()
@@ -98,32 +143,201 @@ class SliderViewSet(viewsets.ModelViewSet):
                         'error': str(e)
                     }, status=status.HTTP_400_BAD_REQUEST
                 )
-    
-    
-    
 
-class HeroSectionViewSet(viewsets.ModelViewSet):
-    queryset = Hero_Section.objects.all()
-    serializer_class = HeroSectionSerializer
-    permission_classes = [AdminCreationPermission]
 
 class DiscountCardViewSet(viewsets.ModelViewSet):
     queryset = DiscountCard.objects.all()
     serializer_class = DiscountCardSerializer
     permission_classes = [AdminCreationPermission]
-
-class SiteQualityCardViewSet(viewsets.ModelViewSet):
-    queryset = SiteQualityCard.objects.all()
-    serializer_class = SiteQualityCardSerializer
-    permission_classes = [AdminCreationPermission]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    # filterset_fields = []
+    search_fields = ['title', 'offer']
+    parser_classes = [MultiPartParser]
+    
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        return Response(
+            {
+                'status': True,
+                'message': 'Discount Card Successfully Created!',
+                'discount card': response.data
+            }, status=status.HTTP_201_CREATED
+        )
+    
+    def update(self, request, *args, **kwargs):
+        try:
+            response = super().update(request, *args, **kwargs)
+            return Response(
+                {
+                    'status': True,
+                    'message': 'Discount Card Successfully Updated!',
+                    'slider': response.data
+                }, status=status.HTTP_200_OK
+            )
+        except:
+            return Response(
+                    {
+                        'status': False,
+                        'message': 'Discount Card not found!'
+                    }, status=status.HTTP_204_NO_CONTENT
+                )
+    
+    def destroy(self, request, *args, **kwargs):
+        discount_card_pk = kwargs.get('pk')
+        try:
+            if DiscountCard.objects.filter(pk=discount_card_pk).exists():
+                discount_card = DiscountCard.objects.get(id=discount_card_pk)
+                discount_card.delete()
+                return Response(
+                    {
+                        'status': True,
+                        'message': 'Discount Card Successfully Deleted!'
+                    }, status=status.HTTP_200_OK
+                )
+            else:
+                return Response(
+                    {
+                        'status': False,
+                        'message': 'Discount Card not found!'
+                    }, status=status.HTTP_204_NO_CONTENT
+                )
+        except Exception as e:
+            return Response(
+                {
+                    'status': False,
+                    'message': 'Somethings wrong!',
+                    'error': str(e)
+                }, status=status.HTTP_204_NO_CONTENT
+            )   
 
 class OurTestimonialViewSet(viewsets.ModelViewSet):
     queryset = OurTestimonial.objects.all()
     serializer_class = OurTestimonialSerializer
     permission_classes = [AdminCreationPermission]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['rating', 'designation', 'is_active']
+    search_fields = ['name', 'designation', 'review']
+    parser_classes = [MultiPartParser]
+    
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        return Response(
+            {
+                'status': True,
+                'message': 'Testimonial Successfully Created!',
+                'discount card': response.data
+            }, status=status.HTTP_201_CREATED
+        )
+    
+    def update(self, request, *args, **kwargs):
+        try:
+            response = super().update(request, *args, **kwargs)
+            return Response(
+                {
+                    'status': True,
+                    'message': 'Testimonial Successfully Updated!',
+                    'slider': response.data
+                }, status=status.HTTP_200_OK
+            )
+        except:
+            return Response(
+                    {
+                        'status': False,
+                        'message': 'Testimonial not found!'
+                    }, status=status.HTTP_204_NO_CONTENT
+                )
+    
+    def destroy(self, request, *args, **kwargs):
+        testimonial_pk = kwargs.get('pk')
+        try:
+            if OurTestimonial.objects.filter(pk=testimonial_pk).exists():
+                testimonial = OurTestimonial.objects.get(id=testimonial_pk)
+                testimonial.delete()
+                return Response(
+                    {
+                        'status': True,
+                        'message': 'Testimonial Successfully Deleted!'
+                    }, status=status.HTTP_200_OK
+                )
+            else:
+                return Response(
+                    {
+                        'status': False,
+                        'message': 'Testimonial not found!'
+                    }, status=status.HTTP_204_NO_CONTENT
+                )
+        except Exception as e:
+            return Response(
+                {
+                    'status': False,
+                    'message': 'Somethings wrong!',
+                    'error': str(e)
+                }, status=status.HTTP_204_NO_CONTENT
+            )
+
 
 class ContentManagementSettingsViewSet(viewsets.ModelViewSet):
     queryset = ContentManagementSettings.objects.all()
     serializer_class = ContentManagementSettingsSerializer
     permission_classes = [AdminCreationPermission]
+    parser_classes = [MultiPartParser]
+    
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        return Response(
+            {
+                'status': True,
+                'message': 'Content Successfully Created!',
+                'content': response.data
+            }, status=status.HTTP_201_CREATED
+        )
+    
+    def update(self, request, *args, **kwargs):
+        query = self.get_object()
+        print(query)
+        try:
+            response = super().update(request, *args, **kwargs)
+            return Response(
+                {
+                    'status': True,
+                    'message': 'Content Successfully Updated!',
+                    'slider': response.data
+                }, status=status.HTTP_200_OK
+            )
+        except Exception as e:
+            return Response(
+                    {
+                        'status': False,
+                        'message': 'Content not found!',
+                        'error': str(e)
+                    }, status=status.HTTP_204_NO_CONTENT
+                )
+    
+    def destroy(self, request, *args, **kwargs):
+        content_pk = kwargs.get('pk')
+        try:
+            if ContentManagementSettings.objects.filter(pk=content_pk).exists():
+                content = ContentManagementSettings.objects.get(id=content_pk)
+                content.delete()
+                return Response(
+                    {
+                        'status': True,
+                        'message': 'Content Successfully Deleted!'
+                    }, status=status.HTTP_200_OK
+                )
+            else:
+                return Response(
+                    {
+                        'status': False,
+                        'message': 'Content not found!'
+                    }, status=status.HTTP_204_NO_CONTENT
+                )
+        except Exception as e:
+            return Response(
+                {
+                    'status': False,
+                    'message': 'Somethings wrong!',
+                    'error': str(e)
+                }, status=status.HTTP_204_NO_CONTENT
+            )   
 

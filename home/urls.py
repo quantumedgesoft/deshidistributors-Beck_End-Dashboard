@@ -5,9 +5,7 @@ from .views import *
 
 router = DefaultRouter()
 router.register(r'sliders', SliderViewSet)
-router.register(r'hero-sections', HeroSectionViewSet)
 router.register(r'discount-cards', DiscountCardViewSet)
-router.register(r'site-quality-cards', SiteQualityCardViewSet)
 router.register(r'our-testimonials', OurTestimonialViewSet)
 router.register(r'content-management-settings', ContentManagementSettingsViewSet)
 
