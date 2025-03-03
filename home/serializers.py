@@ -27,11 +27,12 @@ class SliderSerializer(serializers.ModelSerializer):
         fields = '__all__'
     
     def get_category(self, obj):
+        request = self.context.get('request')
         return {
             "id": obj.category.id,
             "title": obj.category.title,
             "slug": obj.category.slug,
-            "image": obj.category.image.url if obj.category.image else None,
+            "image": request.build_absolute_uri(obj.category.image.url) if obj.category.image else None,
             "is_active": obj.category.is_active,
         } if obj.category else None
     
