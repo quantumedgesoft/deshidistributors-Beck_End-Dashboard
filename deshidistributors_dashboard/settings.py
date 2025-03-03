@@ -16,7 +16,8 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+# ALLOWED_HOSTS = [host.strip() for host in ALLOWED_HOSTS]
 
 
 # Application definition
@@ -64,7 +65,8 @@ SIMPLE_JWT = {
     "UPDATE_LAST_LOGIN": False,
 }
 
-CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_ALL_ORIGINS = True
 
 
 MIDDLEWARE = [
@@ -105,7 +107,7 @@ WSGI_APPLICATION = 'deshidistributors_dashboard.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': BASE_DIR / os.getenv("DATABASE_NAME"),
     }
 }
 
@@ -154,7 +156,6 @@ MEDIA_URL = '/media/'
 # MEDIA_ROOT = [os.path.join(BASE_DIR, 'media'),]
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-CORS_ALLOW_ALL_ORIGINS = True
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
