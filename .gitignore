@@ -9,8 +9,9 @@ __pycache__/
 *.pot
 *.py[cod]
 db.sqlite3
-# media/
-# staticfiles/
+media/
+staticfiles/
+static/
 
 # Environment variables
 .env
