@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from .models import ContentManagementSettings
 from rest_framework import viewsets, permissions, status, filters
 from rest_framework.response import Response
 from .serializers import *
@@ -7,6 +7,7 @@ from rest_framework_simplejwt.views import TokenVerifyView
 from rest_framework_simplejwt.exceptions import TokenError
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.parsers import MultiPartParser
+from rest_framework.views import APIView
 
 class AdminCreationPermission(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -276,70 +277,88 @@ class OurTestimonialViewSet(viewsets.ModelViewSet):
             )
 
 
-class ContentManagementSettingsViewSet(viewsets.ModelViewSet):
-    queryset = ContentManagementSettings.objects.all()
-    serializer_class = ContentManagementSettingsSerializer
-    permission_classes = [AdminCreationPermission]
-    parser_classes = [MultiPartParser]
+class ContentManagementSettingsViews(APIView):
+    # permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
+
+    def get_queryset(self):
+        return ContentManagementSettings.objects.all()
     
-    def create(self, request, *args, **kwargs):
-        response = super().create(request, *args, **kwargs)
+    def get(self, request):
+        instance = ContentManagementSettings.objects.all().first()
+        if instance:
+            response = ContentManagementSettingsSerializer(instance)
+            return Response(
+                response.data
+            )
         return Response(
             {
-                'status': True,
-                'message': 'Content Successfully Created!',
-                'content': response.data
-            }, status=status.HTTP_201_CREATED
+                "detail": "No Site content found."
+            }, status=status.HTTP_404_NOT_FOUND
         )
+
+#     queryset = ContentManagementSettings.objects.all()
+#     serializer_class = ContentManagementSettingsSerializer
+#     permission_classes = [AdminCreationPermission]
+#     parser_classes = [MultiPartParser]
     
-    def update(self, request, *args, **kwargs):
-        query = self.get_object()
-        print(query)
-        try:
-            response = super().update(request, *args, **kwargs)
-            return Response(
-                {
-                    'status': True,
-                    'message': 'Content Successfully Updated!',
-                    'slider': response.data
-                }, status=status.HTTP_200_OK
-            )
-        except Exception as e:
-            return Response(
-                    {
-                        'status': False,
-                        'message': 'Content not found!',
-                        'error': str(e)
-                    }, status=status.HTTP_204_NO_CONTENT
-                )
+#     def create(self, request, *args, **kwargs):
+#         response = super().create(request, *args, **kwargs)
+#         return Response(
+#             {
+#                 'status': True,
+#                 'message': 'Content Successfully Created!',
+#                 'content': response.data
+#             }, status=status.HTTP_201_CREATED
+#         )
     
-    def destroy(self, request, *args, **kwargs):
-        content_pk = kwargs.get('pk')
-        try:
-            if ContentManagementSettings.objects.filter(pk=content_pk).exists():
-                content = ContentManagementSettings.objects.get(id=content_pk)
-                content.delete()
-                return Response(
-                    {
-                        'status': True,
-                        'message': 'Content Successfully Deleted!'
-                    }, status=status.HTTP_200_OK
-                )
-            else:
-                return Response(
-                    {
-                        'status': False,
-                        'message': 'Content not found!'
-                    }, status=status.HTTP_204_NO_CONTENT
-                )
-        except Exception as e:
-            return Response(
-                {
-                    'status': False,
-                    'message': 'Somethings wrong!',
-                    'error': str(e)
-                }, status=status.HTTP_204_NO_CONTENT
-            )   
+#     def update(self, request, *args, **kwargs):
+#         query = self.get_object()
+#         print(query)
+#         try:
+#             response = super().update(request, *args, **kwargs)
+#             return Response(
+#                 {
+#                     'status': True,
+#                     'message': 'Content Successfully Updated!',
+#                     'slider': response.data
+#                 }, status=status.HTTP_200_OK
+#             )
+#         except Exception as e:
+#             return Response(
+#                     {
+#                         'status': False,
+#                         'message': 'Content not found!',
+#                         'error': str(e)
+#                     }, status=status.HTTP_204_NO_CONTENT
+#                 )
+    
+#     def destroy(self, request, *args, **kwargs):
+#         content_pk = kwargs.get('pk')
+#         try:
+#             if ContentManagementSettings.objects.filter(pk=content_pk).exists():
+#                 content = ContentManagementSettings.objects.get(id=content_pk)
+#                 content.delete()
+#                 return Response(
+#                     {
+#                         'status': True,
+#                         'message': 'Content Successfully Deleted!'
+#                     }, status=status.HTTP_200_OK
+#                 )
+#             else:
+#                 return Response(
+#                     {
+#                         'status': False,
+#                         'message': 'Content not found!'
+#                     }, status=status.HTTP_204_NO_CONTENT
+#                 )
+#         except Exception as e:
+#             return Response(
+#                 {
+#                     'status': False,
+#                     'message': 'Somethings wrong!',
+#                     'error': str(e)
+#                 }, status=status.HTTP_204_NO_CONTENT
+#             )   
 
 
 
