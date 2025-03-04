@@ -14,7 +14,7 @@ router.register(r'team', OurTeamViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('site-content/', ContentManagementSettingsViews.as_view(), name='site-content'),
+    path('site-content/', ContentManagementSettingsView.as_view(), name='site-content'),
     path('login/', TokenObtainPairView.as_view(), name='admin-login'),
     path('user-create/', CustomUserViewSet.as_view(), name='user-create'),
     path('token-refresh/', TokenRefreshView.as_view(), name='token-refresh'),

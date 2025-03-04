@@ -2,7 +2,7 @@ from .models import ContentManagementSettings
 from rest_framework import viewsets, permissions, status, filters
 from rest_framework.response import Response
 from .serializers import *
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveAPIView
 from rest_framework_simplejwt.views import TokenVerifyView
 from rest_framework_simplejwt.exceptions import TokenError
 from django_filters.rest_framework import DjangoFilterBackend
@@ -277,25 +277,24 @@ class OurTestimonialViewSet(viewsets.ModelViewSet):
             )
 
 
-class ContentManagementSettingsViews(APIView):
-    # permission_classes = [DjangoModelPermissionsOrAnonReadOnly]
-
-    def get_queryset(self):
-        return ContentManagementSettings.objects.all()
+class ContentManagementSettingsView(RetrieveAPIView):
+    queryset = ContentManagementSettings.objects.all()
+    serializer_class = ContentManagementSettingsSerializer
     
-    def get(self, request):
-        instance = ContentManagementSettings.objects.all().first()
-        if instance:
-            response = ContentManagementSettingsSerializer(instance)
-            return Response(
-                response.data
-            )
-        return Response(
-            {
-                "detail": "No Site content found."
-            }, status=status.HTTP_404_NOT_FOUND
-        )
+    def get(self, request, *args, **kwargs):
+        instance = self.get_queryset().first()
+        if instance is None:
+            return Response({"status": False, "message": "No content found."}, status=status.HTTP_404_NOT_FOUND)
+        serializer = self.get_serializer(instance)
+        return Response({"status": True, "data": serializer.data}, status=status.HTTP_200_OK)
+    
+    # def get_queryset(self):
+    #     return ContentManagementSettings.objects.all().first()
+    
+    # def get_object(self):
+    #     return self.queryset.first()
 
+# class ContentManagementSettingsViewSets(viewsets.ModelViewSet):
 #     queryset = ContentManagementSettings.objects.all()
 #     serializer_class = ContentManagementSettingsSerializer
 #     permission_classes = [AdminCreationPermission]
