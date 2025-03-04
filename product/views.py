@@ -7,6 +7,13 @@ from rest_framework import permissions
 from rest_framework import status, filters
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.parsers import MultiPartParser
+from rest_framework.pagination import PageNumberPagination
+
+class CustomPagenumberpagination(PageNumberPagination):
+    page_size = 8
+    page_size_query_param = 'page_size'
+    max_page_size = 100
+    
 
 class AdminCreationPermision(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -23,6 +30,7 @@ class CategoryViewSet(viewsets.ModelViewSet):
     filterset_fields = ['title', 'is_active']
     search_fields = ['title', 'description', 'slug']
     parser_classes = [MultiPartParser]
+    pagination_class = CustomPagenumberpagination
     
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
@@ -64,6 +72,7 @@ class ProductViewSet(viewsets.ModelViewSet):
     filterset_fields = ['product_type']
     search_fields = ['title', 'short_description', 'slug', 'details']
     parser_classes = [MultiPartParser]
+    pagination_class = CustomPagenumberpagination
     
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
