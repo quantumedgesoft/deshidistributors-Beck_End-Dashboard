@@ -70,7 +70,7 @@ SIMPLE_JWT = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "http://192.168.109.13:3000",
-    "http://api.deshidistributors.com",
+    "https://api.deshidistributors.com",
     "https://deshidistributors.com"
 ]
 
