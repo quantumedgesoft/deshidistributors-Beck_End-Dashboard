@@ -341,3 +341,72 @@ class ContentManagementSettingsViewSet(viewsets.ModelViewSet):
                 }, status=status.HTTP_204_NO_CONTENT
             )   
 
+
+
+class OurPartnerViewSet(viewsets.ModelViewSet):
+    queryset = OurPartner.objects.all()
+    serializer_class = OurPartnerSerializer
+    permission_classes = [AdminCreationPermission]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name']
+    parser_classes = [MultiPartParser]
+    
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        return Response(
+            {
+                'status': True,
+                'message': 'Partner Successfully Created!',
+                'discount card': response.data
+            }, status=status.HTTP_201_CREATED
+        )
+    
+    def update(self, request, *args, **kwargs):
+        try:
+            response = super().update(request, *args, **kwargs)
+            return Response(
+                {
+                    'status': True,
+                    'message': 'Partner Successfully Updated!',
+                    'slider': response.data
+                }, status=status.HTTP_200_OK
+            )
+        except:
+            return Response(
+                    {
+                        'status': False,
+                        'message': 'Partner not found!'
+                    }, status=status.HTTP_204_NO_CONTENT
+                )
+    
+    def destroy(self, request, *args, **kwargs):
+        id = kwargs.get('pk')
+        try:
+            if OurPartner.objects.filter(id=id).exists():
+                our_partner = OurPartner.objects.get(id=id)
+                our_partner.delete()
+                return Response(
+                    {
+                        'status': True,
+                        'message': 'Partner Successfully Deleted!'
+                    }, status=status.HTTP_200_OK
+                )
+            else:
+                return Response(
+                    {
+                        'status': False,
+                        'message': 'Partner not found!'
+                    }, status=status.HTTP_204_NO_CONTENT
+                )
+        except Exception as e:
+            return Response(
+                {
+                    'status': False,
+                    'message': 'Somethings wrong!',
+                    'error': str(e)
+                }, status=status.HTTP_204_NO_CONTENT
+            )
+
+
+
+

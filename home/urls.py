@@ -7,6 +7,7 @@ router = DefaultRouter()
 router.register(r'sliders', SliderViewSet)
 router.register(r'discount-cards', DiscountCardViewSet)
 router.register(r'our-testimonials', OurTestimonialViewSet)
+router.register(r'our-partner', OurPartnerViewSet)
 router.register(r'content-management-settings', ContentManagementSettingsViewSet)
 
 urlpatterns = [
