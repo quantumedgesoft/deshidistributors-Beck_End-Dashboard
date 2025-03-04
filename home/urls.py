@@ -10,11 +10,11 @@ router.register(r'our-testimonials', OurTestimonialViewSet)
 router.register(r'our-partner', OurPartnerViewSet)
 router.register(r'contact-us', ContactUsViewSet)
 router.register(r'team', OurTeamViewSet)
-router.register(r'content-management-settings', ContentManagementSettingsViewSet)
+# router.register(r'content-management-settings', ContentManagementSettingsViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),
-    
+    path('site-content/', ContentManagementSettingsViews.as_view(), name='site-content'),
     path('login/', TokenObtainPairView.as_view(), name='admin-login'),
     path('user-create/', CustomUserViewSet.as_view(), name='user-create'),
     path('token-refresh/', TokenRefreshView.as_view(), name='token-refresh'),
