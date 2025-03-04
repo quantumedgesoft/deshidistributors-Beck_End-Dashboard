@@ -408,5 +408,31 @@ class OurPartnerViewSet(viewsets.ModelViewSet):
             )
 
 
+class ContactUsViewSet(viewsets.ModelViewSet):
+    queryset = ContactUs.objects.all()
+    serializer_class = ContactUsSerializer
+    permission_classes = [permissions.AllowAny]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['name', 'email', 'phone', 'message']
+    
+    def create(self, request, *args, **kwargs):
+        super().create(request, *args, **kwargs)
+        return Response(
+            {
+                'status': True,
+                'message': 'Thanks for contacting with us!'
+            }, status=status.HTTP_201_CREATED
+        )
+
+
+class OurTeamViewSet(viewsets.ModelViewSet):
+    queryset = OurTeam.objects.all()
+    serializer_class = OurTeamSerializer
+    permission_classes = [AdminCreationPermission]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['designation']
+    search_fields = ['name', 'phone', 'email', 'designation', 'message']
+    parser_classes = [MultiPartParser]
+    
 
 

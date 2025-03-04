@@ -71,7 +71,7 @@ class Product(models.Model):
         if self.pk and Product.objects.filter(pk=self.pk).exists():
             old_instance = Product.objects.get(pk=self.pk)
             previous_image_delete_os(old_instance.image, self.image)
-        self.slug = generate_unique_slug(Product, self.slug)
+        self.slug = generate_unique_slug(Product, self.title)
         super().save(*args, **kwargs)
     
     def delete(self, *args, **kwargs):

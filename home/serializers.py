@@ -70,3 +70,14 @@ class OurPartnerSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+
+class ContactUsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ContactUs
+        fields = '__all__'
+
+
+class OurTeamSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OurTeam
+        fields = '__all__'
