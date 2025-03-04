@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from product.models import Category
-from django.core.files.storage import default_storage
+from .extra_module import *
 
 class CustomUser(AbstractUser):
     USER_TYPE = (
@@ -45,17 +45,13 @@ class Slider(models.Model):
     updated_date = models.DateTimeField(auto_now=True)
     
     def save(self, *args, **kwargs):
-        if self.pk:
+        if self.pk and Slider.objects.filter(pk=self.pk).exists():
             old_instance = Slider.objects.get(pk=self.pk)
-            if old_instance and old_instance.image and old_instance.image != self.image:
-                if default_storage.exists(old_instance.image.name):
-                    default_storage.delete(old_instance.image.name)
-        
+            previous_image_delete_os(old_instance.image, self.image)
         super().save(*args, **kwargs)
     
     def delete(self, *args, **kwargs):
-        if self.image and default_storage.exists(self.image.name):
-            default_storage.delete(self.image.name)
+        image_delete_os(self.image)
         return super().delete( *args, **kwargs)
     
     def __str__(self):
@@ -69,16 +65,13 @@ class DiscountCard(models.Model):
     offer = models.CharField(max_length=100)
     
     def save(self, *args, **kwargs):
-        if self.pk:
+        if self.pk and DiscountCard.objects.filter(pk=self.pk).exists():
             old_instance = DiscountCard.objects.get(pk=self.pk)
-            if old_instance and old_instance.image and old_instance.image != self.image:
-                if default_storage.exists(old_instance.image.name):
-                    default_storage.delete(old_instance.image.name)
+            previous_image_delete_os(old_instance.image, self.image)
         super().save(*args, **kwargs)
     
     def delete(self, *args, **kwargs):
-        if self.image and default_storage.exists(self.image.name):
-            default_storage.delete(self.image.name)
+        image_delete_os(self.image)
         return super().delete( *args, **kwargs)
     
     created_date = models.DateTimeField(auto_now_add=True)
@@ -103,16 +96,13 @@ class OurTestimonial(models.Model):
     updated_date = models.DateTimeField(auto_now=True)
     
     def save(self, *args, **kwargs):
-        if self.pk:
+        if self.pk and OurTestimonial.objects.filter(pk=self.pk).exists():
             old_instance = OurTestimonial.objects.get(pk=self.pk)
-            if old_instance and old_instance.picture and old_instance.picture != self.picture:
-                if default_storage.exists(old_instance.picture.name):
-                    default_storage.delete(old_instance.picture.name)
+            previous_image_delete_os(old_instance.picture, self.picture)
         super().save(*args, **kwargs)
     
     def delete(self, *args, **kwargs):
-        if self.picture and default_storage.exists(self.picture.name):
-            default_storage.delete(self.picture.name)
+        image_delete_os(self.picture)
         return super().delete( *args, **kwargs)
     
     def __str__(self):
@@ -160,60 +150,49 @@ class ContentManagementSettings(models.Model):
     twitter = models.URLField(max_length=250, blank=True, null=True)
     youtube = models.URLField(max_length=250, blank=True, null=True)
     
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    
+    
     def save(self, *args, **kwargs):
-        if self.pk:
+        if self.pk and ContentManagementSettings.objects.filter(pk=self.pk).exists():
             old_instance = ContentManagementSettings.objects.get(pk=self.pk)
-            if old_instance:
-                #for main logo
-                if old_instance.main_logo and old_instance.main_logo != self.main_logo:
-                    if default_storage.exists(old_instance.main_logo.name):
-                        default_storage.delete(old_instance.main_logo.name)
-                
-                #for fav icon
-                if old_instance.fav_icon and old_instance.fav_icon != self.fav_icon:
-                    if default_storage.exists(old_instance.fav_icon.name):
-                        default_storage.delete(old_instance.fav_icon.name)
-                
-                #for secondary logo
-                if old_instance.secondary_logo and old_instance.secondary_logo != self.secondary_logo:
-                    if default_storage.exists(old_instance.secondary_logo.name):
-                        default_storage.delete(old_instance.secondary_logo.name)
-            
+            previous_image_delete_os(old_instance.main_logo, self.main_logo)
+            previous_image_delete_os(old_instance.fav_icon, self.fav_icon)
+            previous_image_delete_os(old_instance.secondary_logo, self.secondary_logo)
         super().save(*args, **kwargs)
     
     def delete(self, *args, **kwargs):
-        #for main logo
-        if self.main_logo and default_storage.exists(self.main_logo.name):
-            default_storage.delete(self.main_logo.name)
-        
-        #for fav icon
-        if self.fav_icon and default_storage.exists(self.fav_icon.name):
-            default_storage.delete(self.fav_icon.name)
-        
-        #for secondary logo
-        if self.secondary_logo and default_storage.exists(self.secondary_logo.name):
-            default_storage.delete(self.secondary_logo.name)
-        
+        image_delete_os(self.main_logo)
+        image_delete_os(self.fav_icon)
+        image_delete_os(self.secondary_logo)
         return super().delete( *args, **kwargs)
-    
-    
-    # is_hero = models.BooleanField(default=True)
-    # is_service = models.BooleanField(default=True)
-    # is_about = models.BooleanField(default=True)
-    # is_portfolio = models.BooleanField(default=True)
-    # is_video  = models.BooleanField(default=True)
-    # is_work_process = models.BooleanField(default=True)
-    # is_team = models.BooleanField(default=True)
-    # is_faq = models.BooleanField(default=True)
-    # is_testmonial = models.BooleanField(default=True)
-    # is_cta = models.BooleanField(default=True)
     
     def __str__(self):
         return f'{self.company_name} | {self.id}'
 
 
 
-
-
+class OurPartner(models.Model):
+    company = models.CharField(max_length=100)
+    logo = models.ImageField(upload_to='image/partner-logo/', blank=True, null=True)
+    
+    created_at = models.DateTimeField(auto_now_add=True, editable=False)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def save(self, *args, **kwargs):
+        if self.pk and OurPartner.objects.filter(pk=self.pk).exists():
+            old_instance = OurPartner.objects.get(pk=self.pk)
+            previous_image_delete_os(old_instance.logo, self.logo)
+        super().save(*args, **kwargs)
+    
+    def delete(self, *args, **kwargs):
+        image_delete_os(self.logo)
+        return super().delete(*args, **kwargs)
+    
+    def __str__(self):
+        return self.company
+    
 
 

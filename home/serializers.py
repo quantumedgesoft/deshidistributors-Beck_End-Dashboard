@@ -63,3 +63,10 @@ class ContentManagementSettingsSerializer(serializers.ModelSerializer):
         model = ContentManagementSettings
         fields = '__all__'
 
+
+class OurPartnerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OurPartner
+        fields = '__all__'
+
+

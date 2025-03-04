@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils.text import slugify
-from django.core.files.storage import default_storage
+from home.extra_module import previous_image_delete_os, image_delete_os
 
 def generate_unique_slug(model_object, slug_field):
     slug = slugify(slug_field)
@@ -10,6 +10,17 @@ def generate_unique_slug(model_object, slug_field):
         unique_slug = f'{slug}-{num}'
         num+=1
     return unique_slug
+
+
+class Tag(models.Model):
+    name = models.CharField(max_length=55)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    udpated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        return self.name
+
 
 class Category(models.Model):
     title = models.CharField(max_length=255)
@@ -22,18 +33,15 @@ class Category(models.Model):
     udpated_at = models.DateTimeField(auto_now=True)
     
     def save(self, *args, **kwargs):
-        if self.pk:
+        if self.pk and Category.objects.filter(pk=self.pk).exists():
             old_instance = Category.objects.get(pk=self.pk)
-            if old_instance and old_instance.image and old_instance.image != self.image:
-                if default_storage.exists(old_instance.image.name):
-                    default_storage.delete(old_instance.image.name)
-        
+            previous_image_delete_os(old_instance.image, self.image)
+
         self.slug = generate_unique_slug(Category, self.title)
         super().save(*args, **kwargs)
     
     def delete(self, *args, **kwargs):
-        if self.image and default_storage.exists(self.image.name):
-            default_storage.delete(self.image.name)
+        image_delete_os(self.image)
         super().delete(*args, **kwargs)
     
     
@@ -47,6 +55,8 @@ class Product(models.Model):
         ('Upcomming', 'Upcomming'),
         ('Deactive', 'Deactive'),
     )
+    category = models.ForeignKey(Category, blank=True, null=True, related_name='products', on_delete=models.DO_NOTHING)
+    tags = models.ForeignKey(Tag, blank=True, null=True, related_name='products', on_delete=models.DO_NOTHING)
     title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, blank=True, null=True)
     short_description = models.TextField(blank=True, null=True)
@@ -58,18 +68,14 @@ class Product(models.Model):
     udpated_at = models.DateTimeField(auto_now=True)
     
     def save(self, *args, **kwargs):
-        if self.pk:
+        if self.pk and Product.objects.filter(pk=self.pk).exists():
             old_instance = Product.objects.get(pk=self.pk)
-            if old_instance and old_instance.image and old_instance.image != self.image:
-                if default_storage.exists(old_instance.image.name):
-                    default_storage.delete(old_instance.image.name)
-        
+            previous_image_delete_os(old_instance.image, self.image)
         self.slug = generate_unique_slug(Product, self.slug)
         super().save(*args, **kwargs)
     
     def delete(self, *args, **kwargs):
-        if self.image and default_storage.exists(self.image.name):
-            default_storage.delete(self.image.name)
+        image_delete_os(self.image)
         super().delete(*args, **kwargs)
     
     def __str__(self):
