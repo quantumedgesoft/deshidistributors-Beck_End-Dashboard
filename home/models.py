@@ -66,16 +66,6 @@ class CardSection01(models.Model):
     
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
-    
-    def save(self, *args, **kwargs):
-        if self.pk and CardSection01.objects.filter(pk=self.pk).exists():
-            old_instance = CardSection01.objects.get(pk=self.pk)
-            previous_image_delete_os(old_instance.image, self.image)
-        super().save(*args, **kwargs)
-    
-    def delete(self, *args, **kwargs):
-        image_delete_os(self.image)
-        return super().delete(*args, **kwargs)
 
     def __str__(self):
         return f"{self.title} | {self.id}"
