@@ -61,7 +61,7 @@ class Slider(models.Model):
 class CardSection01(models.Model):
     title = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
-    image = models.ImageField(upload_to='image/card-section-01/', blank=True, null=True)
+    icon = models.CharField(blank=True, null=True, max_length=25)
     is_active = models.BooleanField(default=True)
     
     created_date = models.DateTimeField(auto_now_add=True)
