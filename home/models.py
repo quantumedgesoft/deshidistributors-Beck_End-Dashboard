@@ -80,6 +80,27 @@ class CardSection01(models.Model):
     def __str__(self):
         return f"{self.title} | {self.id}"
 
+class AdsBanner(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+    link = models.URLField(max_length=255, blank=True, null=True)
+    image = models.ImageField(upload_to='image/ads-banner/', blank=True, null=True)
+    unit = models.CharField(max_length=10)
+    price = models.PositiveIntegerField()
+    is_active = models.BooleanField(default=True)
+    
+    def save(self, *args, **kwargs):
+        if self.pk and AdsBanner.objects.filter(pk=self.pk).exists():
+            old_instance = AdsBanner.objects.get(pk=self.pk)
+            previous_image_delete_os(old_instance.image, self.image)
+        super().save(*args, **kwargs)
+    
+    def delete(self, *args, **kwargs):
+        image_delete_os(self.image)
+        return super().delete(*args, **kwargs)
+    
+    def __str__(self):
+        return f"{self.title} | {self.pk}"
 
 class DiscountCard(models.Model):
     image = models.ImageField(upload_to='image/discount-card/', blank=True, null=True)
