@@ -73,7 +73,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://192.168.68.114:3000",
     "https://api.deshidistributors.com",
     "https://deshidistributors.com",
-    "https://deshidistributors.netlify.app"
+    "https://deshidistributors.netlify.app",
+    "https://site.deshidistributors.com",
 ]
 
 
