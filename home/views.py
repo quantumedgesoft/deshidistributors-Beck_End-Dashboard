@@ -282,50 +282,27 @@ class DiscountCardViewSet(viewsets.ModelViewSet):
             )   
 
 
-class AdsBannerViewSet(viewsets.ModelViewSet):
+class AdsBannerViewSet(RetrieveAPIView):
     queryset = AdsBanner.objects.all()
     serializer_class = AdsBannerSerializer
-    permission_classes = [AdminCreationPermission]
-    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    filterset_fields = ['is_active']
-    search_fields = ['title', 'description', 'link']
-    parser_classes = [MultiPartParser]
     
-    def list(self, request, *args, **kwargs):
-        self.queryset = self.queryset.filter(is_active=True)
-        return super().list(request, *args, **kwargs)
-    
-    def create(self, request, *args, **kwargs):
-        response = super().create(request, *args, **kwargs)
+    def get(self, request, *args, **kwargs):
+        instance = self.get_queryset().first()
+        if instance is None:
+            return Response(
+                {
+                    'status':True,
+                    'message': 'No Content Found'
+                }, status=status.HTTP_204_NO_CONTENT
+            )
+        serializers = self.get_serializer(instance)
         return Response(
             {
                 'status': True,
-                'message': 'Ads Banner Successfully Created!',
-                'product': response.data
-            }, status=status.HTTP_201_CREATED
-        )
-    
-    def update(self, request, *args, **kwargs):
-        response = super().update(request, *args, **kwargs)
-        return Response(
-            {
-                'status': True,
-                'message': 'Ads Banner Successfully Updated!',
-                'product': response.data
+                'data': serializers.data
             }, status=status.HTTP_200_OK
         )
     
-    def destroy(self, request, *args, **kwargs):
-        store = self.get_object()
-        store.delete()
-        return Response(
-            {
-                'status': True,
-                'message': 'Ads Banner Successfully Deleted!',
-            }, status=status.HTTP_204_NO_CONTENT
-        )
-
-
 
 
 class OurTestimonialViewSet(viewsets.ModelViewSet):
@@ -405,70 +382,7 @@ class ContentManagementSettingsView(RetrieveAPIView):
         serializer = self.get_serializer(instance)
         return Response({"status": True, "data": serializer.data}, status=status.HTTP_200_OK)
 
-# class ContentManagementSettingsViewSets(viewsets.ModelViewSet):
-#     queryset = ContentManagementSettings.objects.all()
-#     serializer_class = ContentManagementSettingsSerializer
-#     permission_classes = [AdminCreationPermission]
-#     parser_classes = [MultiPartParser]
-    
-#     def create(self, request, *args, **kwargs):
-#         response = super().create(request, *args, **kwargs)
-#         return Response(
-#             {
-#                 'status': True,
-#                 'message': 'Content Successfully Created!',
-#                 'content': response.data
-#             }, status=status.HTTP_201_CREATED
-#         )
-    
-#     def update(self, request, *args, **kwargs):
-#         query = self.get_object()
-#         print(query)
-#         try:
-#             response = super().update(request, *args, **kwargs)
-#             return Response(
-#                 {
-#                     'status': True,
-#                     'message': 'Content Successfully Updated!',
-#                     'slider': response.data
-#                 }, status=status.HTTP_200_OK
-#             )
-#         except Exception as e:
-#             return Response(
-#                     {
-#                         'status': False,
-#                         'message': 'Content not found!',
-#                         'error': str(e)
-#                     }, status=status.HTTP_204_NO_CONTENT
-#                 )
-    
-#     def destroy(self, request, *args, **kwargs):
-#         content_pk = kwargs.get('pk')
-#         try:
-#             if ContentManagementSettings.objects.filter(pk=content_pk).exists():
-#                 content = ContentManagementSettings.objects.get(id=content_pk)
-#                 content.delete()
-#                 return Response(
-#                     {
-#                         'status': True,
-#                         'message': 'Content Successfully Deleted!'
-#                     }, status=status.HTTP_200_OK
-#                 )
-#             else:
-#                 return Response(
-#                     {
-#                         'status': False,
-#                         'message': 'Content not found!'
-#                     }, status=status.HTTP_204_NO_CONTENT
-#                 )
-#         except Exception as e:
-#             return Response(
-#                 {
-#                     'status': False,
-#                     'message': 'Somethings wrong!',
-#                     'error': str(e)
-#                 }, status=status.HTTP_204_NO_CONTENT
-#             )   
+
 
 
 
