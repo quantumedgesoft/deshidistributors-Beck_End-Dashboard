@@ -58,6 +58,11 @@ class DiscountCardSerializer(serializers.ModelSerializer):
         model = DiscountCard
         fields = '__all__'
 
+class AdsBannerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AdsBanner
+        fields = '__all__'
+
 class OurTestimonialSerializer(serializers.ModelSerializer):
     class Meta:
         model = OurTestimonial

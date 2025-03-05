@@ -282,6 +282,49 @@ class DiscountCardViewSet(viewsets.ModelViewSet):
             )   
 
 
+class AdsBannerViewSet(viewsets.ModelViewSet):
+    queryset = AdsBanner.objects.all()
+    serializer_class = AdsBannerSerializer
+    permission_classes = [AdminCreationPermission]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['is_active']
+    search_fields = ['title', 'description', 'link']
+    parser_classes = [MultiPartParser]
+    
+    def list(self, request, *args, **kwargs):
+        self.queryset = self.queryset.filter(is_active=True)
+        return super().list(request, *args, **kwargs)
+    
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        return Response(
+            {
+                'status': True,
+                'message': 'Ads Banner Successfully Created!',
+                'product': response.data
+            }, status=status.HTTP_201_CREATED
+        )
+    
+    def update(self, request, *args, **kwargs):
+        response = super().update(request, *args, **kwargs)
+        return Response(
+            {
+                'status': True,
+                'message': 'Ads Banner Successfully Updated!',
+                'product': response.data
+            }, status=status.HTTP_200_OK
+        )
+    
+    def destroy(self, request, *args, **kwargs):
+        store = self.get_object()
+        store.delete()
+        return Response(
+            {
+                'status': True,
+                'message': 'Ads Banner Successfully Deleted!',
+            }, status=status.HTTP_204_NO_CONTENT
+        )
+
 
 
 
