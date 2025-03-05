@@ -83,7 +83,7 @@ class CardSection01(models.Model):
 class AdsBanner(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField(blank=True, null=True)
-    link = models.URLField(max_length=255, blank=True, null=True)
+    link = models.CharField(max_length=255, blank=True, null=True)
     image = models.ImageField(upload_to='image/ads-banner/', blank=True, null=True)
     unit = models.CharField(max_length=10)
     price = models.PositiveIntegerField()
