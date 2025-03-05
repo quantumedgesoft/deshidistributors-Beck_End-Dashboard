@@ -58,11 +58,36 @@ class Slider(models.Model):
         return self.category.title
 
 
+class CardSection01(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.TextField(blank=True, null=True)
+    image = models.ImageField(upload_to='image/card-section-01/', blank=True, null=True)
+    is_active = models.BooleanField(default=True)
+    
+    created_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
+    
+    def save(self, *args, **kwargs):
+        if self.pk and CardSection01.objects.filter(pk=self.pk).exists():
+            old_instance = CardSection01.objects.get(pk=self.pk)
+            previous_image_delete_os(old_instance.image, self.image)
+        super().save(*args, **kwargs)
+    
+    def delete(self, *args, **kwargs):
+        image_delete_os(self.image)
+        return super().delete(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.title} | {self.id}"
+
 
 class DiscountCard(models.Model):
     image = models.ImageField(upload_to='image/discount-card/', blank=True, null=True)
     title = models.CharField(max_length=100)
     offer = models.CharField(max_length=100)
+    is_active = models.BooleanField(default=True)
+    created_date = models.DateTimeField(auto_now_add=True)
+    updated_date = models.DateTimeField(auto_now=True)
     
     def save(self, *args, **kwargs):
         if self.pk and DiscountCard.objects.filter(pk=self.pk).exists():
@@ -74,8 +99,8 @@ class DiscountCard(models.Model):
         image_delete_os(self.image)
         return super().delete( *args, **kwargs)
     
-    created_date = models.DateTimeField(auto_now_add=True)
-    updated_date = models.DateTimeField(auto_now=True)
+    def __str__(self):
+        return f"{self.title} | {self.id}"
 
 
 class OurTestimonial(models.Model):

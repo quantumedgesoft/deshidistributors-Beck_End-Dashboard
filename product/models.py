@@ -64,6 +64,10 @@ class Product(models.Model):
     image = models.ImageField(upload_to='image/product/', blank=True, null=True)
     product_type = models.CharField(max_length=25, choices=PRODUCT_TYPE, default='Active')
     
+    rating = models.PositiveIntegerField(blank=True, null=True)
+    total_review = models.PositiveIntegerField(blank=True, null=True)
+    weight = models.CharField(max_length=255, blank=True, null=True)
+    
     created_at = models.DateTimeField(auto_now_add=True)
     udpated_at = models.DateTimeField(auto_now=True)
     
@@ -82,5 +86,25 @@ class Product(models.Model):
         return self.title
 
 
+
+class AvailableStore(models.Model):
+    title = models.CharField(max_length=50)
+    logo = models.ImageField(upload_to='image/store/', blank=True, null=True)
+    link = models.URLField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    udpated_at = models.DateTimeField(auto_now=True)
+    
+    def save(self, *args, **kwargs):
+        if self.pk and AvailableStore.objects.filter(pk=self.pk).exists():
+            old_instance = AvailableStore.objects.get(pk=self.pk)
+            previous_image_delete_os(old_instance.logo, self.logo)
+        super().save(*args, **kwargs)
+    
+    def delete(self, *args, **kwargs):
+        image_delete_os(self.logo)
+        return super().delete(*args, **kwargs)
+    
+    def __str__(self):
+        return f"{self.title} | {self.pk}"
 
 

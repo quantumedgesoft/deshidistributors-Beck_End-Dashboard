@@ -146,12 +146,82 @@ class SliderViewSet(viewsets.ModelViewSet):
                 )
 
 
+class CardSection01ViewSet(viewsets.ModelViewSet):
+    queryset = CardSection01.objects.all()
+    serializer_class = CardSection01Serializer
+    permission_classes = [AdminCreationPermission]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['is_active']
+    search_fields = ['title', 'description']
+    parser_classes = [MultiPartParser]
+    
+    def list(self, request, *args, **kwargs):
+        self.queryset = self.queryset.filter(is_active=True)[:4]
+        return super().list(request, *args, **kwargs)
+    
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        return Response(
+            {
+                'status': True,
+                'message': 'Card Successfully Created!',
+                'data': response.data
+            }, status=status.HTTP_201_CREATED
+        )
+    
+    def update(self, request, *args, **kwargs):
+        try:
+            response = super().update(request, *args, **kwargs)
+            return Response(
+                {
+                    'status': True,
+                    'message': 'Card Successfully Updated!',
+                    'data': response.data
+                }, status=status.HTTP_200_OK
+            )
+        except:
+            return Response(
+                    {
+                        'status': False,
+                        'message': 'Card not found!'
+                    }, status=status.HTTP_204_NO_CONTENT
+                )
+    
+    def destroy(self, request, *args, **kwargs):
+        card_01_pk = kwargs.get('pk')
+        try:
+            if CardSection01.objects.filter(pk=card_01_pk).exists():
+                card_01 = CardSection01.objects.get(id=card_01_pk)
+                card_01.delete()
+                return Response(
+                    {
+                        'status': True,
+                        'message': 'Card Successfully Deleted!'
+                    }, status=status.HTTP_200_OK
+                )
+            else:
+                return Response(
+                    {
+                        'status': False,
+                        'message': 'Card not found!'
+                    }, status=status.HTTP_204_NO_CONTENT
+                )
+        except Exception as e:
+            return Response(
+                {
+                    'status': False,
+                    'message': 'Somethings wrong!',
+                    'error': str(e)
+                }, status=status.HTTP_204_NO_CONTENT
+            )
+
+
 class DiscountCardViewSet(viewsets.ModelViewSet):
     queryset = DiscountCard.objects.all()
     serializer_class = DiscountCardSerializer
     permission_classes = [AdminCreationPermission]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
-    # filterset_fields = []
+    filterset_fields = ['is_active']
     search_fields = ['title', 'offer']
     parser_classes = [MultiPartParser]
     
@@ -210,6 +280,10 @@ class DiscountCardViewSet(viewsets.ModelViewSet):
                     'error': str(e)
                 }, status=status.HTTP_204_NO_CONTENT
             )   
+
+
+
+
 
 class OurTestimonialViewSet(viewsets.ModelViewSet):
     queryset = OurTestimonial.objects.all()
@@ -287,12 +361,6 @@ class ContentManagementSettingsView(RetrieveAPIView):
             return Response({"status": False, "message": "No content found."}, status=status.HTTP_404_NOT_FOUND)
         serializer = self.get_serializer(instance)
         return Response({"status": True, "data": serializer.data}, status=status.HTTP_200_OK)
-    
-    # def get_queryset(self):
-    #     return ContentManagementSettings.objects.all().first()
-    
-    # def get_object(self):
-    #     return self.queryset.first()
 
 # class ContentManagementSettingsViewSets(viewsets.ModelViewSet):
 #     queryset = ContentManagementSettings.objects.all()
