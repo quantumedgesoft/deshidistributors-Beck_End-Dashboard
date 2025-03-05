@@ -63,7 +63,6 @@ class CategoryViewSet(viewsets.ModelViewSet):
         )
 
 
-
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
@@ -103,4 +102,46 @@ class ProductViewSet(viewsets.ModelViewSet):
                 'message': 'Product Successfully Deleted!',
             }, status=status.HTTP_204_NO_CONTENT
         )
+
+
+class AvailableStoreViewSet(viewsets.ModelViewSet):
+    queryset = AvailableStore.objects.all()
+    serializer_class = AvailableStoreSerializer
+    permission_classes = [AdminCreationPermision]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    search_fields = ['title', 'link', 'logo']
+    parser_classes = [MultiPartParser]
+    pagination_class = CustomPagenumberpagination
+    
+    def create(self, request, *args, **kwargs):
+        response = super().create(request, *args, **kwargs)
+        return Response(
+            {
+                'status': True,
+                'message': 'Store Successfully Created!',
+                'product': response.data
+            }, status=status.HTTP_201_CREATED
+        )
+    
+    def update(self, request, *args, **kwargs):
+        response = super().update(request, *args, **kwargs)
+        return Response(
+            {
+                'status': True,
+                'message': 'Store Successfully Updated!',
+                'product': response.data
+            }, status=status.HTTP_200_OK
+        )
+    
+    def destroy(self, request, *args, **kwargs):
+        store = self.get_object()
+        store.delete()
+        return Response(
+            {
+                'status': True,
+                'message': 'Store Successfully Deleted!',
+            }, status=status.HTTP_204_NO_CONTENT
+        )
+
+
 

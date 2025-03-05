@@ -61,5 +61,9 @@ class ProductSerializer(serializers.ModelSerializer):
             tags = Tag.objects.get(id=tag_id)
             validated_data['tags'] = tags
         return super().update(instance, validated_data)
-    
-    
+
+
+class AvailableStoreSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AvailableStore
+        fields = '__all__'

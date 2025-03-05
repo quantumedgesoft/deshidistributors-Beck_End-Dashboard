@@ -48,6 +48,11 @@ class SliderSerializer(serializers.ModelSerializer):
         validated_data['category'] = category
         return super().create(validated_data)
 
+class CardSection01Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = CardSection01
+        fields = '__all__'
+
 class DiscountCardSerializer(serializers.ModelSerializer):
     class Meta:
         model = DiscountCard
