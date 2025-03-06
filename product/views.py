@@ -14,18 +14,13 @@ class CustomPagenumberpagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 100
     
-    def get_paginated_response(self, data):
-        request = self.request
+    def paginate_queryset(self, queryset, request, view=None):
         all_items = request.query_params.get('all', 'false').lower() == 'true'
         page_size = request.query_params.get(self.page_size_query_param)
         if all_items or (page_size and page_size.isdigit() and int(page_size) == 0):
-            return Response(
-                {
-                    'count': len(data),
-                    'results': data
-                }, status=status.HTTP_200_OK
-            )
-        return super().get_paginated_response(data)
+            self.all_data = queryset
+            return None
+        return super().paginate_queryset(queryset, request, view)
     
 
 class AdminCreationPermision(permissions.BasePermission):
@@ -44,6 +39,19 @@ class CategoryViewSet(viewsets.ModelViewSet):
     search_fields = ['title', 'description', 'slug']
     parser_classes = [MultiPartParser]
     pagination_class = CustomPagenumberpagination
+    
+    def list(self, request, *args, **kwargs):
+        all_items = request.query_params.get('all', 'false').lower() == 'true'
+        page_size = request.query_params.get(self.pagination_class.page_size_query_param)
+        if all_items or (page_size and page_size.isdigit() and int(page_size) == 0):
+            data = self.get_serializer(self.queryset, many=True).data
+            return Response(
+                {
+                    'count': len(data),
+                    'resulths': data
+                }, status=status.HTTP_200_OK
+            )
+        return super().list(request, *args, **kwargs)
     
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
@@ -85,6 +93,19 @@ class ProductViewSet(viewsets.ModelViewSet):
     search_fields = ['title', 'short_description', 'slug', 'details']
     parser_classes = [MultiPartParser]
     pagination_class = CustomPagenumberpagination
+    
+    def list(self, request, *args, **kwargs):
+        all_items = request.query_params.get('all', 'false').lower() == 'true'
+        page_size = request.query_params.get(self.pagination_class.page_size_query_param)
+        if all_items or (page_size and page_size.isdigit() and int(page_size) == 0):
+            data = self.get_serializer(self.queryset, many=True).data
+            return Response(
+                {
+                    'count': len(data),
+                    'resulths': data
+                }, status=status.HTTP_200_OK
+            )
+        return super().list(request, *args, **kwargs)
     
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
