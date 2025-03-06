@@ -74,6 +74,7 @@ class SliderViewSet(viewsets.ModelViewSet):
     filterset_fields = ['is_active', 'category']
     search_fields = ['name', 'image', 'category__title']
     parser_classes = [MultiPartParser]
+    pagination_class = None
     
     def update(self, request, *args, **kwargs):
         try:
@@ -154,6 +155,7 @@ class CardSection01ViewSet(viewsets.ModelViewSet):
     filterset_fields = ['is_active']
     search_fields = ['title', 'description']
     parser_classes = [MultiPartParser]
+    pagination_class = None
     
     def list(self, request, *args, **kwargs):
         self.queryset = self.queryset.filter(is_active=True)[:4]
@@ -224,6 +226,7 @@ class DiscountCardViewSet(viewsets.ModelViewSet):
     filterset_fields = ['is_active']
     search_fields = ['title', 'offer']
     parser_classes = [MultiPartParser]
+    pagination_class = None
     
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
@@ -285,6 +288,7 @@ class DiscountCardViewSet(viewsets.ModelViewSet):
 class AdsBannerViewSet(RetrieveAPIView):
     queryset = AdsBanner.objects.all()
     serializer_class = AdsBannerSerializer
+    pagination_class = None
     
     def get(self, request, *args, **kwargs):
         instance = self.get_queryset().first()
@@ -313,6 +317,7 @@ class OurTestimonialViewSet(viewsets.ModelViewSet):
     filterset_fields = ['rating', 'designation', 'is_active']
     search_fields = ['name', 'designation', 'review']
     parser_classes = [MultiPartParser]
+    pagination_class = None
     
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
@@ -374,6 +379,7 @@ class OurTestimonialViewSet(viewsets.ModelViewSet):
 class ContentManagementSettingsView(RetrieveAPIView):
     queryset = ContentManagementSettings.objects.all()
     serializer_class = ContentManagementSettingsSerializer
+    pagination_class = None
     
     def get(self, request, *args, **kwargs):
         instance = self.get_queryset().first()
@@ -393,6 +399,7 @@ class OurPartnerViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name']
     parser_classes = [MultiPartParser]
+    pagination_class = None
     
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)
@@ -457,6 +464,7 @@ class ContactUsViewSet(viewsets.ModelViewSet):
     permission_classes = [permissions.AllowAny]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['name', 'email', 'phone', 'message']
+    pagination_class = None
     
     def create(self, request, *args, **kwargs):
         super().create(request, *args, **kwargs)
@@ -476,6 +484,7 @@ class OurTeamViewSet(viewsets.ModelViewSet):
     filterset_fields = ['designation']
     search_fields = ['name', 'phone', 'email', 'designation', 'message']
     parser_classes = [MultiPartParser]
+    pagination_class = None
     
 
 
