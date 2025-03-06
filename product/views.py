@@ -14,6 +14,19 @@ class CustomPagenumberpagination(PageNumberPagination):
     page_size_query_param = 'page_size'
     max_page_size = 100
     
+    def get_paginated_response(self, data):
+        request = self.request
+        all_items = request.query_params.get('all', 'false').lower() == 'true'
+        page_size = request.query_params.get(self.page_size_query_param)
+        if all_items or (page_size and page_size.isdigit() and int(page_size) == 0):
+            return Response(
+                {
+                    'count': len(data),
+                    'results': data
+                }, status=status.HTTP_200_OK
+            )
+        return super().get_paginated_response(data)
+    
 
 class AdminCreationPermision(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -111,7 +124,7 @@ class AvailableStoreViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     search_fields = ['title', 'link', 'logo']
     parser_classes = [MultiPartParser]
-    pagination_class = CustomPagenumberpagination
+    pagination_class = None
     
     def create(self, request, *args, **kwargs):
         response = super().create(request, *args, **kwargs)

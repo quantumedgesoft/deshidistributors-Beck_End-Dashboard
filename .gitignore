@@ -31,6 +31,5 @@ passenger_wsgi.py
 tmp/
 restart.txt
 
-home/
 del_views.py
 
